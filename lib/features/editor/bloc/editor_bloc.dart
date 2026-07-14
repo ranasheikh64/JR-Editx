@@ -91,8 +91,8 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
       // Using BicubicResizer for high-quality downscaling
       final displayBytes = await BicubicResizer.resizeJpegAsync(
         jpegBytes: bytes,
-        outputWidth: 1200, 
-        outputHeight: 1200,
+        outputWidth: 2500, 
+        outputHeight: 2500,
         quality: 90,
       );
 

@@ -7,6 +7,7 @@ import 'package:saver_gallery/saver_gallery.dart';
 import '../../../core/utils/filter_utils.dart';
 import 'package:flutter_bicubic_resize/flutter_bicubic_resize.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'dart:ui' as ui;
 
 class EditorPage extends StatelessWidget {
   final String? imagePath;
@@ -79,7 +80,7 @@ class _EditorViewState extends State<EditorView> {
                   const SizedBox(width: 8),
                   TextButton(
                     onPressed: _saveImage,
-                    child: const Text('SAVE', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+                    child: const Text('SAVE NOW', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent)),
                   ),
                 ],
               );
@@ -174,6 +175,7 @@ class _EditorViewState extends State<EditorView> {
             if (_currentTool == 'filters') _buildFilterControls(),
             if (_currentTool == 'draw') _buildDrawControls(),
             if (_currentTool == 'adjust') _buildAdjustControls(),
+            if (_currentTool == 'crop') _buildCropControls(),
             const SizedBox(height: 12),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -357,19 +359,23 @@ class _EditorViewState extends State<EditorView> {
   }
 
   Widget _buildCropControls() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _cropActionChip('Free', null),
-        _cropActionChip('1:1', 1.0),
-        _cropActionChip('16:9', 16 / 9),
-        _cropActionChip('4:3', 4 / 3),
-        const VerticalDivider(),
-        IconButton(icon: const Icon(Icons.rotate_left), onPressed: () => _editorKey.currentState?.rotate(degree: -90)),
-        IconButton(icon: const Icon(Icons.rotate_right), onPressed: () => _editorKey.currentState?.rotate(degree: 90)),
-        const SizedBox(width: 8),
-        ElevatedButton(onPressed: _applyCrop, child: const Text('APPLY')),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _cropActionChip('Free', null),
+          _cropActionChip('1:1', 1.0),
+          _cropActionChip('16:9', 16 / 9),
+          _cropActionChip('4:3', 4 / 3),
+          const SizedBox(width: 8, height: 30, child: VerticalDivider()),
+          IconButton(icon: const Icon(Icons.rotate_left), onPressed: () => _editorKey.currentState?.rotate(degree: -90)),
+          IconButton(icon: const Icon(Icons.rotate_right), onPressed: () => _editorKey.currentState?.rotate(degree: 90)),
+          const SizedBox(width: 8),
+          ElevatedButton(onPressed: _applyCrop, child: const Text('APPLY')),
+        ],
+      ),
     );
   }
 
@@ -458,13 +464,29 @@ class _EditorViewState extends State<EditorView> {
     );
 
     try {
-      // Use full resolution if available for export
-      final exportBytes = state.originalImage ?? state.currentImage!;
+      // Use the edited current image from state for export
+      final exportBytes = state.currentImage!;
+      
+      // Decode image dimensions to preserve aspect ratio
+      final ui.Codec codec = await ui.instantiateImageCodec(exportBytes);
+      final ui.FrameInfo frameInfo = await codec.getNextFrame();
+      final double aspectRatio = frameInfo.image.width / frameInfo.image.height;
+      
+      int targetWidth, targetHeight;
+      const int maxDimension = 2500;
+
+      if (aspectRatio > 1) {
+        targetWidth = maxDimension;
+        targetHeight = (maxDimension / aspectRatio).round();
+      } else {
+        targetHeight = maxDimension;
+        targetWidth = (maxDimension * aspectRatio).round();
+      }
       
       final bytes = await BicubicResizer.resizeJpegAsync(
         jpegBytes: exportBytes,
-        outputWidth: 2000, // Pro High Quality
-        outputHeight: 2000,
+        outputWidth: targetWidth, 
+        outputHeight: targetHeight,
         quality: 95,
         filter: BicubicFilter.catmullRom,
       );
