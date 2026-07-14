@@ -72,24 +72,33 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(state.copyWith(isLoading: true));
     try {
       final PermissionState ps = await PhotoManager.requestPermissionExtend();
+      
+      // On Android 14+ (API 34), users can grant partial access ('limited')
       if (ps.isAuth) {
+        // If limited, we might want to show a message, but for now we just load what we can
         final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
           type: RequestType.image,
+          filterOption: FilterOptionGroup(
+            imageOption: const FilterOption(
+              sizeConstraint: SizeConstraint(ignoreSize: true),
+            ),
+          ),
         );
+
         if (paths.isNotEmpty) {
           final List<AssetEntity> assets = await paths.first.getAssetListRange(
             start: 0,
-            end: 50,
+            end: 80, // Increased to 80 for better UX
           );
-          emit(state.copyWith(assets: assets, isLoading: false));
+          emit(state.copyWith(assets: assets, isLoading: false, error: ps == PermissionState.limited ? 'Limited access granted: showing only some photos' : null));
         } else {
           emit(state.copyWith(isLoading: false));
         }
       } else {
-        emit(state.copyWith(isLoading: false, error: 'Permission denied'));
+        emit(state.copyWith(isLoading: false, error: 'Permission denied. Please enable gallery access in settings.'));
       }
     } catch (e) {
-      emit(state.copyWith(isLoading: false, error: e.toString()));
+      emit(state.copyWith(isLoading: false, error: 'Gallery Error: ${e.toString()}'));
     }
   }
 

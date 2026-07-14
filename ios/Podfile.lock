@@ -1,0 +1,53 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_bicubic_resize (1.3.1):
+    - Flutter
+  - flutter_native_splash (2.4.3):
+    - Flutter
+  - image_editor_common (1.0.0):
+    - Flutter
+  - image_picker_ios (0.0.1):
+    - Flutter
+  - photo_manager (3.9.0):
+    - Flutter
+    - FlutterMacOS
+  - saver_gallery (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_bicubic_resize (from `.symlinks/plugins/flutter_bicubic_resize/ios`)
+  - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
+  - image_editor_common (from `.symlinks/plugins/image_editor_common/ios`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - photo_manager (from `.symlinks/plugins/photo_manager/darwin`)
+  - saver_gallery (from `.symlinks/plugins/saver_gallery/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_bicubic_resize:
+    :path: ".symlinks/plugins/flutter_bicubic_resize/ios"
+  flutter_native_splash:
+    :path: ".symlinks/plugins/flutter_native_splash/ios"
+  image_editor_common:
+    :path: ".symlinks/plugins/image_editor_common/ios"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
+  photo_manager:
+    :path: ".symlinks/plugins/photo_manager/darwin"
+  saver_gallery:
+    :path: ".symlinks/plugins/saver_gallery/ios"
+
+SPEC CHECKSUMS:
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_bicubic_resize: 73685a1679248842d5c4e45a4268bc03ce737370
+  flutter_native_splash: c32d145d68aeda5502d5f543ee38c192065986cf
+  image_editor_common: 3de87e7c4804f4ae24c8f8a998362b98c105cac1
+  image_picker_ios: e0ece4aa2a75771a7de3fa735d26d90817041326
+  photo_manager: 25fd77df14f4f0ba5ef99e2c61814dde77e2bceb
+  saver_gallery: af2d0c762dafda254e0ad025ef0dabd6506cd490
+
+PODFILE CHECKSUM: 3c63482e143d1b91d2d2560aee9fb04ecc74ac7e
+
+COCOAPODS: 1.16.2
